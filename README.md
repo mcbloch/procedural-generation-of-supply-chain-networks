@@ -69,6 +69,7 @@ more research.
 - Implement the algorithm in a dynamic environment (game-engine for ex.) where you can change the grid, and it's agent
   and have instant recalculations.
 - Implement the algorithm in a more performant environment like C++.
+- Add animation of the algorithm during the search of the best paths. At the moment only the final paths are animated.
 
 ## Tunnels
 
