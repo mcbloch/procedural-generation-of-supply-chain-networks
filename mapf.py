@@ -8,6 +8,8 @@ from heapq import heappop, heappush
 from random import randint, seed
 
 # profile = LineProfiler()
+import bitarray.util
+
 from grid import Grid
 from models import GridPos, Move, Constraint, Solution
 
@@ -20,7 +22,7 @@ This is because agents are paths that stay at their position.
 # Different test cases
 # --------------------
 
-TEST_CASE = 2
+TEST_CASE = 3
 
 match TEST_CASE:
     case 0:
@@ -44,7 +46,7 @@ match TEST_CASE:
         MIN_Y = 4
         SELECT_RANDOM = True
     case 2:
-        # Small example. Working without tunnels, invalid path overlap with tunnels
+        # Small example. Working with and without tunnels
         SELECT_RANDOM = False
         COLS = 8
         ROWS = 8
@@ -53,8 +55,31 @@ match TEST_CASE:
                           ((5, 6), (1, 1)),
                           ((0, 1), (1, 5))
                           ]
+    case 3:
+        # Case 2 but with some more agents
+        # Needs 13000 iterations
+        SELECT_RANDOM = False
+        COLS = 8
+        ROWS = 8
+        INITIAL_AGENTS = [((0, 3), (2, 3)),
+                          ((0, 6), (6, 1)),
+                          ((5, 6), (1, 1)),
+                          ((0, 1), (1, 5)),
+                          ((2, 0), (4, 3)),  # (6, 7)),
+                          ((2, 7), (3, 1)),
+                          ]
+    case 4:
+        # Horizontal and vertical
+        SELECT_RANDOM = False
+        COLS = 8
+        ROWS = 8
+        INITIAL_AGENTS = [((0, 2), (7, 2)),
+                          ((0, 4), (7, 4)),
+                          ((2, 0), (2, 7)),
+                          ((5, 0), (5, 7)),
+                          ]
 
-MAX_ITERATIONS = 10000
+MAX_ITERATIONS = 15000  # 20 000
 
 
 class Agent:
@@ -138,14 +163,17 @@ class CTNode:  # (Node)
         # TODO Make better performance
         for j, path in enumerate(self.solution):
             for k, path2 in enumerate(self.solution[(j + 1):]):
-                common_positions = set(
-                    (block for (pos, move) in path for block in move.blocks)
-                ).intersection(
-                    set((block for (pos, move) in path2 for block in move.blocks))
-                )
-                if len(common_positions) > 0:
+                path_blocking = bitarray.util.zeros(COLS * ROWS)
+                for (pos, move) in path:
+                    path_blocking |= move.blocking_path
+                path2_blocking = bitarray.util.zeros(COLS * ROWS)
+                for (pos, move) in path2:
+                    path2_blocking |= move.blocking_path
+
+                if (path_blocking & path2_blocking).any():
                     # Conflict!
-                    return j, (j + 1 + k), common_positions.pop()
+                    conflict_idx = (path_blocking & path2_blocking).index(bitarray.bitarray('1'))
+                    return j, (j + 1 + k), GridPos(conflict_idx // ROWS, conflict_idx % ROWS)
         return None
 
 
@@ -225,7 +253,7 @@ class MAPF:
         iteration = 0
         while len(open_nodes) != 0:
             iteration += 1
-            if iteration % 1000 == 0:
+            if iteration % 5 == 0:
                 print(f"Iteration {iteration}")
             if iteration > MAX_ITERATIONS:
                 print("Nothing found")

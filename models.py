@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Tuple
 
+from bitarray import bitarray
+
 
 class PathType(Enum):
     EMPTY = " "
@@ -9,13 +11,14 @@ class PathType(Enum):
     B = "B"
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=True, order=True)
 class GridPos:
+    __slots__ = ['x', 'y']
     x: int
     y: int
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=True)
 class Vec2:
     x: int
     y: int
@@ -42,14 +45,16 @@ class MoveType(Enum):
 
 @dataclass(frozen=True)
 class Move:
+    __slots__ = ['pos', 'blocking_path', 'mtype', 'weight']
     pos: GridPos
-    blocks: set[GridPos]
+    blocking_path: bitarray
     mtype: MoveType
     weight: int
 
 
 @dataclass(frozen=True)
 class MoveOption:
+    __slots__ = ['offset', 'blocks', 'mtype', 'weight']
     offset: Vec2
     blocks: set[Vec2]
     mtype: MoveType

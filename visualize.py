@@ -17,7 +17,7 @@ class MAPFScene(MovingCameraScene):
 
     @staticmethod
     def agent_color(agent_idx):
-        return ["blue", "yellow", "gold", "teal", "red", "maroon", "green", "purple"][
+        return ["blue", "yellow", "gold", "teal_d", "red", "maroon", "green", "purple"][
             agent_idx % 8
             ]
 
