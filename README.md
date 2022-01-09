@@ -7,7 +7,7 @@ Or in a less buzzword sentence
 Work is based on the paper: **Suboptimal Variants of the Conflict-Based Search Algorithm for the Multi-Agent Pathfinding
 Problem** by Max Barer, Guni Sharon, Roni Stern and Ariel Felner <sup>[1]</sup>
 
-## Intro
+## Introduction
 
 The research is done with Factorio in mind as I don't have much experience in other factory games. The concepts however
 should be applicable to similar games as well.
@@ -16,7 +16,7 @@ The idea for the research started with the global concept of generating a comple
 for a game like Factorio. An overview of the involved steps and concepts showed quickly that the scope had to be
 narrowed down.
 
-The scope narrowed to the generation of paths (in Factorio belts) given a set of start and end locations for each path.
+The scope narrowed to the generation of paths ('belts' in Factorio) given a set of start and end locations for each path.
 The algorithm for this is based on the paper linked above<sup>[1]</sup>.
 
 ## First PoC
